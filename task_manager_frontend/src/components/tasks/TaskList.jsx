@@ -11,8 +11,10 @@ export default function TaskList({ tasks, loading, onEdit, onDelete, onStatusCha
   /** Renders loading state, empty state, or list items. */
   if (loading) {
     return (
-      <div style={{ padding: 16 }} className="text-muted" role="status" aria-live="polite">
-        Loading tasks…
+      <div style={{ padding: 16 }} role="status" aria-live="polite">
+        <div className="skeleton-row" />
+        <div className="skeleton-row" />
+        <div className="skeleton-row" />
       </div>
     );
   }
@@ -22,7 +24,7 @@ export default function TaskList({ tasks, loading, onEdit, onDelete, onStatusCha
   }
 
   return (
-    <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+    <ul role="list" aria-label="Tasks" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
       {tasks.map((t) => (
         <TaskItem
           key={t.id}

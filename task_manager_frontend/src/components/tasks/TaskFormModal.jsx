@@ -77,11 +77,14 @@ export default function TaskFormModal({ open, mode = 'create', initialData, onCa
     onCancel?.();
   };
 
+  const errorId = localError ? 'task-form-error' : undefined;
+
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="task-form-title"
+      aria-describedby={errorId}
       className="modal-backdrop"
       style={{
         position: 'fixed',
@@ -101,7 +104,7 @@ export default function TaskFormModal({ open, mode = 'create', initialData, onCa
         <h3 id="task-form-title" style={{ marginBottom: 12 }}>
           {mode === 'edit' ? 'Edit task' : 'New task'}
         </h3>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} aria-busy={submitting}>
           <div className="form-field">
             <label htmlFor="task-title">Title</label>
             <input
@@ -130,7 +133,7 @@ export default function TaskFormModal({ open, mode = 'create', initialData, onCa
             />
           </div>
 
-          <div className="form-row">
+          <div className="form-row" role="group" aria-label="Task options">
             <div className="form-field">
               <label htmlFor="task-priority">Priority</label>
               <select
@@ -172,7 +175,7 @@ export default function TaskFormModal({ open, mode = 'create', initialData, onCa
           </div>
 
           {localError ? (
-            <div role="alert" className="form-error">
+            <div role="alert" id="task-form-error" className="form-error" aria-live="assertive">
               {localError}
             </div>
           ) : null}
@@ -181,7 +184,7 @@ export default function TaskFormModal({ open, mode = 'create', initialData, onCa
             <button type="button" className="btn" onClick={onCancel}>
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary" disabled={submitting}>
+            <button type="submit" className="btn btn-primary" disabled={submitting} aria-busy={submitting}>
               {submitting ? 'Saving…' : mode === 'edit' ? 'Save changes' : 'Create task'}
             </button>
           </div>

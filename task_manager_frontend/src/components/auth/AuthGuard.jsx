@@ -13,7 +13,7 @@ export default function AuthGuard() {
   if (loading) {
     return (
       <div className="container" style={{ paddingTop: '8vh' }}>
-        <div className="surface" style={{ padding: '20px' }}>
+        <div className="surface" style={{ padding: '20px' }} role="status" aria-busy="true" aria-live="polite">
           <p className="text-muted">Checking session…</p>
         </div>
       </div>

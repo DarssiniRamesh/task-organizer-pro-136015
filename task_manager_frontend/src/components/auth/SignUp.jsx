@@ -35,11 +35,13 @@ export default function SignUp() {
     navigate(redirectTo);
   };
 
+  const errorMessage = localError || error?.message;
+
   return (
     <div className="container" style={{ paddingTop: '8vh' }}>
-      <div className="auth-card">
-        <h2 className="auth-title"><span aria-hidden="true">✍️</span> Create account</h2>
-        <form onSubmit={handleSubmit} noValidate>
+      <div className="auth-card" role="region" aria-labelledby="signup-title">
+        <h2 className="auth-title" id="signup-title"><span aria-hidden="true">✍️</span> Create account</h2>
+        <form onSubmit={handleSubmit} noValidate aria-describedby={errorMessage ? 'signup-error' : undefined}>
           <div className="auth-field">
             <label htmlFor="email">Email</label>
             <input
@@ -51,7 +53,7 @@ export default function SignUp() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              aria-invalid={!!localError}
+              aria-invalid={!!errorMessage}
             />
           </div>
 
@@ -67,7 +69,7 @@ export default function SignUp() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              aria-invalid={!!localError}
+              aria-invalid={!!errorMessage}
             />
           </div>
 
@@ -83,18 +85,18 @@ export default function SignUp() {
               onChange={(e) => setConfirm(e.target.value)}
               required
               minLength={6}
-              aria-invalid={!!localError}
+              aria-invalid={!!errorMessage}
             />
           </div>
 
-          {(localError || error) && (
-            <div role="alert" className="auth-error">
-              {localError || error?.message}
+          {errorMessage && (
+            <div id="signup-error" role="alert" className="auth-error" aria-live="assertive">
+              {errorMessage}
             </div>
           )}
 
           <div className="auth-actions">
-            <button className="btn btn-primary" type="submit" disabled={submitting}>
+            <button className="btn btn-primary" type="submit" disabled={submitting} aria-busy={submitting}>
               {submitting ? 'Creating…' : 'Create account'}
             </button>
             <Link className="link" to={`/auth/signin?redirectTo=${encodeURIComponent(redirectTo)}`}>

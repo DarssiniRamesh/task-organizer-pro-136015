@@ -29,9 +29,12 @@ function AppLayout({ children }) {
 
   return (
     <div className="App app-shell">
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <Header onToggleTheme={toggleTheme} theme={theme} />
       <Sidebar />
-      {children}
+      <main id="main-content" role="main" aria-live="polite">
+        {children}
+      </main>
     </div>
   );
 }

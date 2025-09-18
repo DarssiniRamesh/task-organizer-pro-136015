@@ -30,11 +30,13 @@ export default function SignIn() {
     navigate(redirectTo);
   };
 
+  const errorMessage = localError || error?.message;
+
   return (
     <div className="container" style={{ paddingTop: '8vh' }}>
-      <div className="auth-card">
-        <h2 className="auth-title"><span aria-hidden="true">🔐</span> Sign in</h2>
-        <form onSubmit={handleSubmit} noValidate>
+      <div className="auth-card" role="region" aria-labelledby="signin-title">
+        <h2 className="auth-title" id="signin-title"><span aria-hidden="true">🔐</span> Sign in</h2>
+        <form onSubmit={handleSubmit} noValidate aria-describedby={errorMessage ? 'signin-error' : undefined}>
           <div className="auth-field">
             <label htmlFor="email">Email</label>
             <input
@@ -46,7 +48,7 @@ export default function SignIn() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              aria-invalid={!!localError}
+              aria-invalid={!!errorMessage}
             />
           </div>
           <div className="auth-field">
@@ -61,18 +63,18 @@ export default function SignIn() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              aria-invalid={!!localError}
+              aria-invalid={!!errorMessage}
             />
           </div>
 
-          {(localError || error) && (
-            <div role="alert" className="auth-error">
-              {localError || error?.message}
+          {errorMessage && (
+            <div id="signin-error" role="alert" className="auth-error" aria-live="assertive">
+              {errorMessage}
             </div>
           )}
 
           <div className="auth-actions">
-            <button className="btn btn-primary" type="submit" disabled={submitting}>
+            <button className="btn btn-primary" type="submit" disabled={submitting} aria-busy={submitting}>
               {submitting ? 'Signing in…' : 'Sign in'}
             </button>
             <Link className="link" to={`/auth/signup?redirectTo=${encodeURIComponent(redirectTo)}`}>

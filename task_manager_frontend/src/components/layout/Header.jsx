@@ -21,21 +21,23 @@ export default function Header({ onToggleTheme, theme }) {
   };
 
   return (
-    <header className="app-header">
+    <header className="app-header" role="banner">
       <div className="app-title">
-        <Link to="/app/tasks" style={{ display: 'inline-flex', alignItems: 'center', gap: 12 }}>
+        <Link to="/app/tasks" style={{ display: 'inline-flex', alignItems: 'center', gap: 12 }} aria-label="Go to Tasks">
           <span aria-hidden="true">🗂️</span>
           <span>Task Manager</span>
         </Link>
       </div>
-      <div className="app-actions">
+      <div className="app-actions" role="group" aria-label="Header actions">
         {user ? (
           <>
-            <span className="text-muted" style={{ marginRight: 8 }}>{user.email}</span>
-            <button className="btn" onClick={handleSignOut} title="Sign out">Sign out</button>
+            <span className="text-muted" style={{ marginRight: 8 }} aria-live="polite" aria-atomic="true">{user.email}</span>
+            <button className="btn" onClick={handleSignOut} title="Sign out" type="button" aria-label="Sign out">
+              Sign out
+            </button>
           </>
         ) : (
-          <Link className="btn" to="/auth/signin">Sign in</Link>
+          <Link className="btn" to="/auth/signin" aria-label="Sign in">Sign in</Link>
         )}
         <button
           className="btn btn-primary"

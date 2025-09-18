@@ -8,7 +8,7 @@ import React from 'react';
 export default function EmptyState({ onCreateClick }) {
   /** Simple empty state card with CTA */
   return (
-    <div style={{ padding: 16 }} className="text-muted">
+    <div style={{ padding: 16 }} className="text-muted" role="note" aria-live="polite">
       <div style={{ marginBottom: 8, fontWeight: 600, color: 'var(--text)' }}>
         No tasks found
       </div>
@@ -16,7 +16,7 @@ export default function EmptyState({ onCreateClick }) {
         Get started by creating your first task. You can set priority, status and due date.
       </div>
       {onCreateClick ? (
-        <button className="btn btn-primary" type="button" onClick={onCreateClick}>
+        <button className="btn btn-primary" type="button" onClick={onCreateClick} aria-label="Create your first task">
           ➕ New Task
         </button>
       ) : null}

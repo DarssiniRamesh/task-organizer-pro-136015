@@ -48,3 +48,7 @@
 .link:hover {
   text-decoration: underline;
 }
+.link:focus-visible {
+  outline: var(--focus-ring);
+  border-radius: 4px;
+}

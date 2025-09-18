@@ -45,11 +45,11 @@ export default function TaskItem({ task, onEdit, onDelete, onStatusChange }) {
         <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
           {task.title}
           {task.priority ? (
-            <span className={priorityClass(task.priority)} aria-label={`Priority ${task.priority}`}>
+            <span className={priorityClass(task.priority)} aria-label={`Priority ${task.priority}`} role="img">
               {task.priority}
             </span>
           ) : null}
-          <span className={statusClass(task.status)} aria-label={`Status ${task.status}`}>
+          <span className={statusClass(task.status)} aria-label={`Status ${task.status}`} role="img">
             {task.status === 'in_progress' ? 'in progress' : task.status}
           </span>
         </div>

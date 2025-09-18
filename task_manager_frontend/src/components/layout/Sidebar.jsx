@@ -24,8 +24,8 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="app-sidebar">
-      <nav className="sidebar-section" aria-label="Primary">
+    <aside className="app-sidebar" role="complementary" aria-label="Sidebar">
+      <nav className="sidebar-section" aria-label="Primary navigation">
         <div className="sidebar-title">Navigation</div>
         <div className="surface" style={{ padding: '12px' }}>
           <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 8 }}>
@@ -34,6 +34,7 @@ export default function Sidebar() {
                 className={clsx('link')}
                 style={{ fontWeight: location.pathname.startsWith('/app/tasks') ? 650 : 500 }}
                 to="/app/tasks"
+                aria-current={location.pathname.startsWith('/app/tasks') ? 'page' : undefined}
               >
                 Tasks
               </Link>
@@ -43,26 +44,26 @@ export default function Sidebar() {
       </nav>
 
       <div className="sidebar-section" style={{ marginTop: 16 }}>
-        <div className="sidebar-title">Quick filters</div>
+        <div className="sidebar-title" id="quick-filters-title">Quick filters</div>
         <div className="surface" style={{ padding: '12px' }}>
-          <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 6 }}>
+          <ul aria-labelledby="quick-filters-title" style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 6 }}>
             <li>
-              <button className="btn" type="button" onClick={() => goToTasksWith({ status: 'todo' })}>
+              <button className="btn" type="button" onClick={() => goToTasksWith({ status: 'todo' })} aria-label="Filter To Do">
                 To Do
               </button>
             </li>
             <li>
-              <button className="btn" type="button" onClick={() => goToTasksWith({ status: 'in_progress' })}>
+              <button className="btn" type="button" onClick={() => goToTasksWith({ status: 'in_progress' })} aria-label="Filter In Progress">
                 In Progress
               </button>
             </li>
             <li>
-              <button className="btn" type="button" onClick={() => goToTasksWith({ status: 'done' })}>
+              <button className="btn" type="button" onClick={() => goToTasksWith({ status: 'done' })} aria-label="Filter Done">
                 Done
               </button>
             </li>
             <li style={{ marginTop: 6 }}>
-              <button className="btn" type="button" onClick={() => goToTasksWith({ due: 'overdue' })}>
+              <button className="btn" type="button" onClick={() => goToTasksWith({ due: 'overdue' })} aria-label="Filter Overdue">
                 Overdue
               </button>
             </li>

@@ -27,8 +27,8 @@ export default function FilterBar({ filters, onChange }) {
   };
 
   return (
-    <div className="surface" style={{ padding: 16, marginBottom: 16 }}>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+    <div className="surface" style={{ padding: 16, marginBottom: 16 }} role="region" aria-label="Task filters">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 8, alignItems: 'center' }}>
         <select
           value={filters.status}
           onChange={handleChange('status')}
@@ -82,10 +82,21 @@ export default function FilterBar({ filters, onChange }) {
           className="input"
           value={localQ}
           onChange={(e) => setLocalQ(e.target.value)}
-          style={{ flex: '1 1 240px' }}
           aria-label="Search tasks by title"
         />
       </div>
+      <style>{`
+        @media (max-width: 960px) {
+          [aria-label="Task filters"] > div {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+        }
+        @media (max-width: 640px) {
+          [aria-label="Task filters"] > div {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
     </div>
   );
 }

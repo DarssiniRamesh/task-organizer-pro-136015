@@ -1,82 +1,87 @@
-# Lightweight React Template for KAVIA
+# Task Manager Frontend (Soft Mono, Minimalist)
 
-This project provides a minimal React template with a clean, modern UI and minimal dependencies.
+This React app provides an authenticated task manager UI backed by Supabase. It includes responsive design, accessibility (ARIA/keyboard), loading/empty/error states, and a minimalist Soft Mono theme with dark mode.
 
-## Features
+## Quick Start
 
-- **Lightweight**: No heavy UI frameworks - uses only vanilla CSS and React
-- **Modern UI**: Clean, responsive design with KAVIA brand styling
-- **Fast**: Minimal dependencies for quick loading times
-- **Simple**: Easy to understand and modify
+1) Configure environment variables in a `.env` file at the project root:
+- REACT_APP_SUPABASE_URL
+- REACT_APP_SUPABASE_KEY
+- Optional: REACT_APP_SITE_URL (used for sign up emailRedirectTo; fallback is window.location.origin)
 
-## Getting Started
+2) Install and run:
+- npm install
+- npm start
+- Open http://localhost:3000
 
-In the project directory, you can run:
+3) Test and build:
+- npm test
+- npm run build
 
-### `npm start`
+Note: Do not commit your .env file.
 
-Runs the app in development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Key Features
 
-### `npm test`
+- Supabase Authentication (email/password) with session persistence and route protection
+- Task CRUD (title, description, priority, status, due date)
+- Filters (status, priority, due), search with debounce, and sorting
+- Responsive layout (Header, Sidebar, Main). Sidebar collapses on smaller screens
+- Dark mode via data-theme with system prefers-color-scheme support
 
-Launches the test runner in interactive watch mode.
+## Accessibility and UX
 
-### `npm run build`
+- Landmarks: header (role="banner"), sidebar (role="complementary"), main (role="main")
+- Skip link: “Skip to main content” to jump focus for keyboard users
+- ARIA attributes:
+  - Buttons/links labeled with aria-label where helpful
+  - Forms with labelled inputs, inline validation (role="alert", aria-live="assertive")
+  - Modals use role="dialog", aria-modal, labelledby/ describedby
+- Keyboard support:
+  - Escape closes modals
+  - Focus moves to first field when modal opens
+  - Focus-visible styling with high-contrast ring
+- Loading/empty/error:
+  - Skeleton placeholders for list loading
+  - Friendly EmptyState with primary action
+  - Inline errors and alert regions announced to assistive tech
+  - Buttons report aria-busy when actions are in progress
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Project Structure
 
-## Customization
+- src/styles/theme.css: Design tokens, layout grid, focus ring, responsive rules, skip link
+- src/components/layout: Header (theme toggle, auth menu), Sidebar (quick filters)
+- src/components/auth: SignIn, SignUp, AuthGuard (route protection)
+- src/components/tasks: FilterBar, TaskList, TaskItem, TaskFormModal, EmptyState
+- src/hooks: useAuth (Supabase auth), useTasks (CRUD, filters/sort/search)
+- src/lib: supabaseClient
 
-### Colors
+## Routes
 
-The main brand colors are defined as CSS variables in `src/App.css`:
+- /auth/signin, /auth/signup
+- Protected: /app/tasks
 
-```css
-:root {
-  --kavia-orange: #E87A41;
-  --kavia-dark: #1A1A1A;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
-}
-```
+Query params for filters:
+- status (todo|in_progress|done)
+- priority (low|medium|high)
+- due (overdue|today|week)
+- q (search title)
+- sort (due_date|priority|updated_at)
 
-### Components
+## Supabase
 
-This template uses pure HTML/CSS components instead of a UI framework. You can find component styles in `src/App.css`. 
+- Uses REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_KEY (anon key)
+- Email redirect (SignUp): REACT_APP_SITE_URL if provided, else window.location.origin
+- See assets/supabase.md for details
 
-Common components include:
-- Buttons (`.btn`, `.btn-large`)
-- Container (`.container`)
-- Navigation (`.navbar`)
-- Typography (`.title`, `.subtitle`, `.description`)
+## Design
 
-## Learn More
+- Theme: Soft Mono, minimalist
+- Color tokens provide adequate contrast for text and focus rings
+- Generous whitespace, subtle borders and elevation
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Notes
 
-### Code Splitting
+- Keep secrets out of logs
+- RLS should protect tasks per-user server-side; UI scopes by user_id as well
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+For any issues with environment variables, ensure they are set before starting the app. See assets/supabase.md for specifics.

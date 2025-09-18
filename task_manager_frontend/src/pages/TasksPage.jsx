@@ -109,11 +109,11 @@ export default function TasksPage() {
         <div className="surface" style={{ padding: 16, marginBottom: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
             <div>
-              <h2 style={{ marginBottom: 4 }}>Tasks</h2>
+              <h2 style={{ marginBottom: 4 }} aria-label="Tasks heading">Tasks</h2>
               <div className="text-muted" style={{ fontSize: 14 }}>Sorted by: {sortedLabel}</div>
             </div>
             <div>
-              <button className="btn btn-primary" type="button" onClick={onNewTask} aria-haspopup="dialog">
+              <button className="btn btn-primary" type="button" onClick={onNewTask} aria-haspopup="dialog" aria-label="Create new task">
                 ➕ New Task
               </button>
             </div>
@@ -123,7 +123,7 @@ export default function TasksPage() {
         <FilterBar filters={filters} onChange={onFilterChange} />
 
         {error && (
-          <div role="alert" className="surface" style={{ padding: 12, borderLeft: '3px solid var(--error)', marginBottom: 12 }}>
+          <div role="alert" className="surface" style={{ padding: 12, borderLeft: '3px solid var(--error)', marginBottom: 12 }} aria-live="assertive">
             {error.message}
           </div>
         )}

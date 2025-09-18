@@ -11,23 +11,23 @@
 }
 
 .badge-low {
-  border-color: color-mix(in oklab, var(--success) 20%, transparent);
+  border-color: color-mix(in oklab, var(--success) 30%, transparent);
 }
 .badge-medium {
-  border-color: color-mix(in oklab, var(--primary) 20%, transparent);
+  border-color: color-mix(in oklab, var(--primary) 35%, transparent);
 }
 .badge-high {
-  border-color: color-mix(in oklab, var(--error) 20%, transparent);
+  border-color: color-mix(in oklab, var(--error) 35%, transparent);
 }
 
 .badge-todo {
-  border-color: color-mix(in oklab, var(--secondary) 30%, transparent);
+  border-color: color-mix(in oklab, var(--secondary) 40%, transparent);
 }
 .badge-inprogress {
-  border-color: color-mix(in oklab, var(--primary) 30%, transparent);
+  border-color: color-mix(in oklab, var(--primary) 45%, transparent);
 }
 .badge-done {
-  border-color: color-mix(in oklab, var(--success) 30%, transparent);
+  border-color: color-mix(in oklab, var(--success) 45%, transparent);
 }
 
 .input {
@@ -72,4 +72,23 @@
 
 .modal-backdrop {
   backdrop-filter: blur(2px);
+}
+
+/* Simple skeleton rows */
+.skeleton-row {
+  height: 44px;
+  border-top: var(--border);
+  background: linear-gradient(90deg,
+    color-mix(in oklab, var(--surface) 92%, var(--background)),
+    color-mix(in oklab, var(--surface) 98%, var(--background)),
+    color-mix(in oklab, var(--surface) 92%, var(--background)));
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.2s ease-in-out infinite;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
