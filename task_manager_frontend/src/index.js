@@ -8,7 +8,7 @@ import AuthPage from './pages/AuthPage';
 import SignIn from './components/auth/SignIn';
 import SignUp from './components/auth/SignUp';
 import AuthGuard from './components/auth/AuthGuard';
-import TasksPlaceholder from './pages/TasksPlaceholder';
+import TasksPage from './pages/TasksPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -24,7 +24,7 @@ root.render(
             </Route>
             <Route element={<AuthGuard />}>
               <Route path="/app">
-                <Route path="tasks" element={<TasksPlaceholder />} />
+                <Route path="tasks" element={<TasksPage />} />
               </Route>
             </Route>
             <Route path="*" element={<div className="app-main"><div className="placeholder-card"><h2>Not found</h2><p className="text-muted">The page you requested does not exist.</p></div></div>} />
