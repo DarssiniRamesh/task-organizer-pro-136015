@@ -1,242 +1,165 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import useTasks from '../hooks/useTasks';
-import { format } from 'date-fns';
+import FilterBar from '../components/tasks/FilterBar';
+import TaskList from '../components/tasks/TaskList';
+import TaskFormModal from '../components/tasks/TaskFormModal';
+import '../components/tasks/tasks.css';
 
 /**
- * Minimal page to test useTasks hook end-to-end.
- * This focuses on data flow and basic interactivity; full UI polish comes later.
+ * TasksPage: End-to-end page integrating tasks hook with UI components:
+ * - FilterBar (filters, sorting, search)
+ * - TaskList (listing, edit/delete)
+ * - TaskFormModal (add/edit modal)
+ * - URL query param sync for filters and deep-link editing
  */
 
 // PUBLIC_INTERFACE
 export default function TasksPage() {
-  const [localQ, setLocalQ] = useState('');
-  const { tasks, loading, error, filters, setFilters, createTask, updateTask, deleteTask } = useTasks(
-    {},
-    {}
-  );
+  const { tasks, loading, error, filters, setFilters, createTask, updateTask, deleteTask } =
+    useTasks(readFiltersFromQuery(useLocation().search), {});
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Simple form state for creating a task
-  const [title, setTitle] = useState('');
-  const [priority, setPriority] = useState('medium');
-  const [status, setStatus] = useState('todo');
-  const [dueDate, setDueDate] = useState('');
+  // Modal state
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editTask, setEditTask] = useState(null);
 
-  const canSubmit = title.trim().length > 0;
-
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    const payload = {
-      title: title.trim(),
-      priority,
-      status,
-      due_date: dueDate ? new Date(dueDate).toISOString() : null,
-    };
-    const { error: err } = await createTask(payload);
-    if (!err) {
-      setTitle('');
-      setDueDate('');
-      setPriority('medium');
-      setStatus('todo');
+  // Keep URL in sync when filters change
+  useEffect(() => {
+    const q = new URLSearchParams();
+    if (filters.status && filters.status !== 'all') q.set('status', filters.status);
+    if (filters.priority && filters.priority !== 'all') q.set('priority', filters.priority);
+    if (filters.due && filters.due !== 'all') q.set('due', filters.due);
+    if (filters.q) q.set('q', filters.q);
+    if (filters.sort && filters.sort !== 'updated_at') q.set('sort', filters.sort);
+    const next = q.toString();
+    const current = location.search.replace(/^\?/, '');
+    if (next !== current) {
+      navigate({ pathname: location.pathname, search: next ? `?${next}` : '' }, { replace: true });
     }
+  }, [filters, navigate, location.pathname, location.search]);
+
+  // Optional: observe ?id=<taskId> for deep-link edit
+  useEffect(() => {
+    const sp = new URLSearchParams(location.search);
+    const editId = sp.get('id');
+    if (editId) {
+      const t = tasks.find((x) => x.id === editId);
+      if (t) {
+        setEditTask(t);
+        setIsFormOpen(true);
+      }
+    }
+  }, [location.search, tasks]);
+
+  const onFilterChange = (next) => setFilters(next);
+
+  const onNewTask = () => {
+    setEditTask(null);
+    setIsFormOpen(true);
+  };
+
+  const onEditTask = (t) => {
+    setEditTask(t);
+    setIsFormOpen(true);
+    const sp = new URLSearchParams(location.search);
+    sp.set('id', t.id);
+    navigate({ pathname: location.pathname, search: `?${sp.toString()}` }, { replace: true });
+  };
+
+  const onDeleteTask = async (t) => {
+    // simple confirm dialog per requirements
+    const ok = window.confirm(`Delete "${t.title}"? This cannot be undone.`);
+    if (!ok) return;
+    await deleteTask(t.id);
+  };
+
+  const onStatusChange = async (id, status) => {
+    await updateTask(id, { status });
+  };
+
+  const handleCloseModal = () => {
+    setIsFormOpen(false);
+    setEditTask(null);
+    // remove id param if present
+    const sp = new URLSearchParams(location.search);
+    if (sp.has('id')) {
+      sp.delete('id');
+      navigate({ pathname: location.pathname, search: sp.toString() ? `?${sp.toString()}` : '' }, { replace: true });
+    }
+  };
+
+  const handleSubmitModal = async (payload) => {
+    if (editTask) {
+      return await updateTask(editTask.id, payload);
+    }
+    return await createTask(payload);
   };
 
   const sortedLabel = useMemo(() => {
     if (filters.sort === 'due_date') return 'Due date';
     if (filters.sort === 'priority') return 'Priority';
     return 'Recently updated';
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.sort]);
-
-  // reflect local search text into filters with debounce-like simple approach
-  useEffect(() => {
-    const h = setTimeout(() => {
-      setFilters((f) => ({ ...f, q: localQ }));
-    }, 300);
-    return () => clearTimeout(h);
-  }, [localQ, setFilters]);
 
   return (
     <div className="app-main">
       <div className="container">
-        <div className="surface" style={{ padding: 16, marginBottom: 16 }}>
-          <h2 style={{ marginBottom: 8 }}>Tasks</h2>
-          <div className="text-muted" style={{ fontSize: 14, marginBottom: 8 }}>
-            Sorted by: {sortedLabel}
-          </div>
-
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
-            <select
-              value={filters.status}
-              onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value }))}
-              aria-label="Filter by status"
-              className="auth-input"
-            >
-              <option value="all">All statuses</option>
-              <option value="todo">To Do</option>
-              <option value="in_progress">In Progress</option>
-              <option value="done">Done</option>
-            </select>
-
-            <select
-              value={filters.priority}
-              onChange={(e) => setFilters((f) => ({ ...f, priority: e.target.value }))}
-              aria-label="Filter by priority"
-              className="auth-input"
-            >
-              <option value="all">All priorities</option>
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-
-            <select
-              value={filters.due}
-              onChange={(e) => setFilters((f) => ({ ...f, due: e.target.value }))}
-              aria-label="Filter by due"
-              className="auth-input"
-            >
-              <option value="all">Any due</option>
-              <option value="overdue">Overdue</option>
-              <option value="today">Due today</option>
-              <option value="week">Due this week</option>
-            </select>
-
-            <select
-              value={filters.sort}
-              onChange={(e) => setFilters((f) => ({ ...f, sort: e.target.value }))}
-              aria-label="Sort tasks"
-              className="auth-input"
-            >
-              <option value="updated_at">Recently updated</option>
-              <option value="due_date">Due date</option>
-              <option value="priority">Priority</option>
-            </select>
-
-            <input
-              type="search"
-              placeholder="Search title…"
-              className="auth-input"
-              value={localQ}
-              onChange={(e) => setLocalQ(e.target.value)}
-              style={{ flex: '1 1 240px' }}
-              aria-label="Search tasks by title"
-            />
-          </div>
-
-          {error && (
-            <div role="alert" className="auth-error">
-              {error.message}
+        <div className="surface" style={{ padding: 16, marginBottom: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <div>
+              <h2 style={{ marginBottom: 4 }}>Tasks</h2>
+              <div className="text-muted" style={{ fontSize: 14 }}>Sorted by: {sortedLabel}</div>
             </div>
-          )}
+            <div>
+              <button className="btn btn-primary" type="button" onClick={onNewTask} aria-haspopup="dialog">
+                ➕ New Task
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div className="surface" style={{ padding: 16, marginBottom: 16 }}>
-          <h3 style={{ marginBottom: 8 }}>New task</h3>
-          <form onSubmit={handleCreate} style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <input
-              type="text"
-              placeholder="Task title"
-              className="auth-input"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              aria-label="Task title"
-              style={{ flex: '1 1 260px' }}
-            />
+        <FilterBar filters={filters} onChange={onFilterChange} />
 
-            <select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value)}
-              aria-label="Priority"
-              className="auth-input"
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              aria-label="Status"
-              className="auth-input"
-            >
-              <option value="todo">To Do</option>
-              <option value="in_progress">In Progress</option>
-              <option value="done">Done</option>
-            </select>
-
-            <input
-              type="date"
-              className="auth-input"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              aria-label="Due date"
-            />
-
-            <button className="btn btn-primary" type="submit" disabled={!canSubmit}>
-              Add
-            </button>
-          </form>
-        </div>
+        {error && (
+          <div role="alert" className="surface" style={{ padding: 12, borderLeft: '3px solid var(--error)', marginBottom: 12 }}>
+            {error.message}
+          </div>
+        )}
 
         <div className="surface" style={{ padding: 0 }}>
           <div style={{ padding: 16, borderBottom: 'var(--border)' }}>
             <h3 style={{ margin: 0 }}>Your tasks</h3>
           </div>
-
-          {loading ? (
-            <div style={{ padding: 16 }} className="text-muted">
-              Loading tasks…
-            </div>
-          ) : tasks.length === 0 ? (
-            <div style={{ padding: 16 }} className="text-muted">
-              No tasks found. Create your first task above.
-            </div>
-          ) : (
-            <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-              {tasks.map((t) => {
-                const overdue =
-                  t.due_date ? new Date(t.due_date).getTime() < new Date().setHours(0, 0, 0, 0) : false;
-                return (
-                  <li
-                    key={t.id}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 12,
-                      padding: 12,
-                      borderTop: 'var(--border)',
-                      borderLeft: overdue ? '3px solid var(--error)' : '3px solid transparent',
-                    }}
-                  >
-                    <div style={{ flex: '1 1 auto' }}>
-                      <div style={{ fontWeight: 600 }}>{t.title}</div>
-                      <div className="text-muted" style={{ fontSize: 13 }}>
-                        {t.priority} • {t.status}
-                        {t.due_date ? ` • due ${format(new Date(t.due_date), 'yyyy-MM-dd')}` : ''}
-                      </div>
-                    </div>
-                    <select
-                      aria-label={`Update status for ${t.title}`}
-                      className="auth-input"
-                      value={t.status}
-                      onChange={(e) => updateTask(t.id, { status: e.target.value })}
-                    >
-                      <option value="todo">To Do</option>
-                      <option value="in_progress">In Progress</option>
-                      <option value="done">Done</option>
-                    </select>
-                    <button className="btn" onClick={() => deleteTask(t.id)}>
-                      Delete
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+          <TaskList
+            tasks={tasks}
+            loading={loading}
+            onEdit={onEditTask}
+            onDelete={onDeleteTask}
+            onStatusChange={onStatusChange}
+          />
         </div>
       </div>
+
+      <TaskFormModal
+        open={isFormOpen}
+        mode={editTask ? 'edit' : 'create'}
+        initialData={editTask || undefined}
+        onCancel={handleCloseModal}
+        onSubmit={handleSubmitModal}
+      />
     </div>
   );
+}
+
+function readFiltersFromQuery(search) {
+  const sp = new URLSearchParams(search || '');
+  return {
+    status: sp.get('status') || 'all',
+    priority: sp.get('priority') || 'all',
+    due: sp.get('due') || 'all',
+    q: sp.get('q') || '',
+    sort: sp.get('sort') || 'updated_at',
+  };
 }

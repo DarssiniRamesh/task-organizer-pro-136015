@@ -1,4 +1,5 @@
 @import "./styles/theme.css";
+@import "./components/tasks/tasks.css";
 
 /* Any app-wide minimal overrides beyond theme.css can live here if needed */
 body {

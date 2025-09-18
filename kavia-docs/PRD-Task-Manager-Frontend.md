@@ -118,7 +118,7 @@ This PRD covers the frontend application only, implemented in React and integrat
 
 ### Components (Frontend)
 - Auth components: SignIn, SignUp, AuthGuard (route protection).
-- Task components: TaskList, TaskListItem, TaskFilters, TaskFormModal, DeleteConfirmModal.
+- Task components: TaskList, TaskItem, FilterBar, TaskFormModal (with delete confirmation handled inline), EmptyState.
 - Layout components: Header, Sidebar, Main, ThemeToggle.
 
 ## Technical Stack

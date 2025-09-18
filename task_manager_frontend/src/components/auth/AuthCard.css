@@ -29,6 +29,14 @@
   background: color-mix(in oklab, var(--surface) 96%, var(--background));
 }
 
+/* Alias to keep visual consistency with tasks input fields */
+.input {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: var(--border);
+  background: color-mix(in oklab, var(--surface) 96%, var(--background));
+}
+
 .auth-actions {
   display: flex;
   align-items: center;
