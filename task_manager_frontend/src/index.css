@@ -1,61 +1,6 @@
-:root {
-  --primary: #6B7280;
-  --secondary: #9CA3AF;
-  --success: #10B981;
-  --error: #EF4444;
-  --background: #F9FAFB;
-  --surface: #FFFFFF;
-  --text: #111827;
+@import "./styles/theme.css";
 
-  /* Common UI tokens */
-  --radius: 10px;
-  --shadow: 0 1px 2px rgba(17, 24, 39, 0.06), 0 1px 3px rgba(17, 24, 39, 0.1);
-  --border: 1px solid rgba(17, 24, 39, 0.08);
-  --muted: #6B7280;
-}
-
-[data-theme="dark"] {
-  --background: #0f1115;
-  --surface: #111318;
-  --text: #E5E7EB;
-  --secondary: #6B7280;
-  --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.25);
-  --border: 1px solid rgba(229, 231, 235, 0.08);
-  --muted: #9CA3AF;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html, body, #root {
-  height: 100%;
-}
-
+/* Any app-wide minimal overrides beyond theme.css can live here if needed */
 body {
-  margin: 0;
-  background: var(--background);
-  color: var(--text);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji";
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.4;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  font: inherit;
-}
-
-code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-    monospace;
+  line-height: 1.45; /* slight tweak for readability */
 }
