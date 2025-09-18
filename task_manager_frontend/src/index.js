@@ -10,6 +10,8 @@ import SignUp from './components/auth/SignUp';
 import AuthGuard from './components/auth/AuthGuard';
 import TasksPage from './pages/TasksPage';
 
+const MainWrapper = ({ children }) => <div className="app-main">{children}</div>;
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
@@ -17,17 +19,44 @@ root.render(
       <BrowserRouter>
         <AppLayout>
           <Routes>
-            <Route path="/" element={<div className="app-main"><div className="placeholder-card"><h2>Welcome</h2><p className="text-muted">Use the menu to navigate. Go to /auth/signin to start.</p></div></div>} />
+            <Route
+              path="/"
+              element={
+                <MainWrapper>
+                  <div className="placeholder-card">
+                    <h2>Welcome</h2>
+                    <p className="text-muted">Use the menu to navigate. Go to /auth/signin to start.</p>
+                  </div>
+                </MainWrapper>
+              }
+            />
             <Route path="/auth" element={<AuthPage />}>
               <Route path="signin" element={<SignIn />} />
               <Route path="signup" element={<SignUp />} />
             </Route>
             <Route element={<AuthGuard />}>
               <Route path="/app">
-                <Route path="tasks" element={<TasksPage />} />
+                <Route
+                  path="tasks"
+                  element={
+                    <MainWrapper>
+                      <TasksPage />
+                    </MainWrapper>
+                  }
+                />
               </Route>
             </Route>
-            <Route path="*" element={<div className="app-main"><div className="placeholder-card"><h2>Not found</h2><p className="text-muted">The page you requested does not exist.</p></div></div>} />
+            <Route
+              path="*"
+              element={
+                <MainWrapper>
+                  <div className="placeholder-card">
+                    <h2>Not found</h2>
+                    <p className="text-muted">The page you requested does not exist.</p>
+                  </div>
+                </MainWrapper>
+              }
+            />
           </Routes>
         </AppLayout>
       </BrowserRouter>
