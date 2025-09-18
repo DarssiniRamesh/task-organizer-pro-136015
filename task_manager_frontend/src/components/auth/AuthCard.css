@@ -1,0 +1,50 @@
+.auth-card {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: var(--space-6);
+  background: var(--surface);
+  border: var(--border);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius-md);
+}
+
+.auth-title {
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: var(--space-3);
+}
+
+.auth-input {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: var(--border);
+  background: color-mix(in oklab, var(--surface) 96%, var(--background));
+}
+
+.auth-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-3);
+  gap: var(--space-3);
+}
+
+.auth-error {
+  color: var(--error);
+  font-size: var(--text-sm);
+  margin-top: var(--space-2);
+}
+
+.auth-footer {
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}

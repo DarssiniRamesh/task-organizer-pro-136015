@@ -1,8 +1,15 @@
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import { AuthProvider } from './hooks/useAuth';
+import AppLayout from './App';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+test('renders header title', () => {
+  render(
+    <AuthProvider>
+      <AppLayout>
+        <div />
+      </AppLayout>
+    </AuthProvider>
+  );
+  const title = screen.getByText(/Task Manager/i);
+  expect(title).toBeInTheDocument();
 });

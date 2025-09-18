@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import useAuth from './hooks/useAuth';
 
 /**
- * Root application component providing the base layout:
- * - Header: App title and theme toggle
+ * Root application layout:
+ * - Header: App title, theme toggle, and user actions (sign out)
  * - Sidebar: Placeholder for filters/navigation
- * - Main: Placeholder for primary content (Tasks list area)
- * The component also controls a document-level data-theme attribute for light/dark modes.
+ * - Main content is rendered by routes outside this component
+ * Controls document-level data-theme for light/dark modes.
  */
 // PUBLIC_INTERFACE
-function App() {
+function AppLayout({ children }) {
+  const { user, signOut } = useAuth();
   const [theme, setTheme] = useState(() => {
     // Respect prefers-color-scheme; allow manual override later
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -33,6 +35,12 @@ function App() {
           <span>Task Manager</span>
         </div>
         <div className="app-actions">
+          {user ? (
+            <>
+              <span className="text-muted" style={{ marginRight: 8 }}>{user.email}</span>
+              <button className="btn" onClick={signOut} title="Sign out">Sign out</button>
+            </>
+          ) : null}
           <button
             className="btn btn-primary"
             onClick={toggleTheme}
@@ -55,20 +63,10 @@ function App() {
         </div>
       </aside>
 
-      <main className="app-main">
-        <div className="placeholder-card">
-          <h2>Welcome</h2>
-          <p>
-            The Soft Mono theme is active. This is a minimalist scaffold for the
-            Header / Sidebar / Main layout. Continue building features here.
-          </p>
-          <p className="text-muted" style={{ marginTop: '12px' }}>
-            Next steps: add routing, auth screens, and task list components.
-          </p>
-        </div>
-      </main>
+      {children}
     </div>
   );
 }
 
-export default App;
+// PUBLIC_INTERFACE
+export default AppLayout;
